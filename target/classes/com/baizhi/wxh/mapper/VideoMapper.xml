@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baizhi.wxh.dao.VideoMapper">
+    <select id="queryByReleaseTime" resultType="com.baizhi.wxh.po.VideoPO">
+        select c.cateName,u.picImg userPhoto,
+        v.id,v.title videoTitle,v.cover_path cover,v.video_path path,
+        v.create_time uploadTime,v.description
+        from yx_category c right join yx_video v on c.id = v.category_id
+        left join yx_user u on v.user_id = u.id
+        where v.status = '1'
+        order by v.create_time desc
+    </select>
+</mapper>

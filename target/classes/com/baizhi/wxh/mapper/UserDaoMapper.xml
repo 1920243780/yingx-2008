@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.wxh.dao.UserDao">
+    <sql id="queryUser">
+        id,nickName,phone,picImg,brief,createDate,vxNum,status
+    </sql>
+
+    <select id="selectBySexAndDate" parameterType="String" resultType="com.baizhi.wxh.entity.UserVo">
+        select CONCAT(MONTH(createDate),'月') month,count(id) count
+        from yx_user
+        where sex = #{sex} group by MONTH(createDate)
+    </select>
+
+    <select id="selectBySexAndCity" parameterType="String" resultType="com.baizhi.wxh.entity.City">
+        select city name,count(id) value
+        from yx_user
+        where sex = #{sex} group by city
+    </select>
+
+    <select id="selectAll" resultType="com.baizhi.wxh.entity.User">
+        select <include refid="queryUser"/>
+        from yx_user
+    </select>
+
+    <select id="selectByPage" resultType="com.baizhi.wxh.entity.User">
+        select <include refid="queryUser"/>
+        from yx_user
+        limit ${(curPage-1)*pageSize},#{pageSize}
+    </select>
+
+    <select id="selectOne" parameterType="String" resultType="com.baizhi.wxh.entity.User">
+        select <include refid="queryUser"/>
+        from yx_user
+        where id = #{id}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(*) from yx_user
+    </select>
+
+    <insert id="insert" parameterType="com.baizhi.wxh.entity.User">
+        insert into yx_user
+        values(#{id},#{nickName},#{phone},#{picImg},#{brief},sysdate(),#{vxNum},0)
+    </insert>
+    
+    <update id="update" parameterType="com.baizhi.wxh.entity.User">
+        update yx_user
+        <set>
+            <if test="nickName != null and nickName !=''">nickName = #{nickName},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="picImg != null and picImg != ''">picImg = #{picImg},</if>
+            <if test="brief != null and brief != ''">brief = #{brief},</if>
+            <if test="vxNum != null and vxNum != ''">vxNum = #{vxNum},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        delete from yx_user
+        where id = #{id}
+    </delete>
+</mapper>
